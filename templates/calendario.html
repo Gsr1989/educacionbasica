@@ -1,0 +1,11 @@
+<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Calendario</title></head><body>
+  <h2>Asistencias de {{curp}}</h2>
+  <ul>
+  {% for a in asistencias %}
+    <li>{{a.fecha_hora}}</li>
+  {% else %}
+    <li>(sin registros)</li>
+  {% endfor %}
+  </ul>
+  <a href="/">Inicio</a>
+</body></html>
