@@ -7,24 +7,12 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <header>
-        <h1>Registro Exitoso</h1>
-    </header>
-
-    <main class="center">
-        <p><strong>{{ nombre }}</strong> ha sido registrado correctamente.</p>
-        <p><strong>CURP:</strong> {{ curp }}</p>
-        <p>Escanea o descarga el siguiente código QR:</p>
-
-        <img src="data:image/png;base64,{{ qr_base64 }}" alt="QR generado">
-        <br>
+    <div class="container">
+        <h2>Registro Exitoso</h2>
+        <p><strong>{{ nombre }}</strong> ha sido registrado con CURP: <strong>{{ curp }}</strong></p>
+        <img src="data:image/png;base64,{{ qr_base64 }}" alt="Código QR">
         <a class="boton" href="data:image/png;base64,{{ qr_base64 }}" download="qr_{{ curp }}.png">Descargar QR</a>
-        <br>
-        <a class="link" href="/">Volver al inicio</a>
-    </main>
-
-    <footer>
-        <p>&copy; 2025 Sistema de Asistencia Escolar.</p>
-    </footer>
+        <a class="boton" href="/">Volver al inicio</a>
+    </div>
 </body>
 </html>
