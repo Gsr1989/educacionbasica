@@ -1,61 +1,40 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Calendario de Asistencias</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+    <meta charset="UTF-8">
+    <title>Calendario de Asistencia</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <style>
+        .asistencia-dia {
+            display: inline-block;
+            padding: 10px;
+            margin: 5px;
+            border-radius: 5px;
+            color: white;
+        }
+
+        .verde {
+            background-color: #007f5f;
+        }
+
+        .rojo {
+            background-color: #c1121f;
+        }
+    </style>
 </head>
 <body>
-  <header>
-    <h1>Calendario de Asistencias</h1>
-  </header>
-
-  <main class="center">
-    <div id="calendar" style="max-width: 900px; margin: 0 auto;"></div>
-    <a class="link" href="/">Volver al inicio</a>
-  </main>
-
-  <footer>
-    <p>&copy; 2025 Sistema de Asistencia Escolar.</p>
-  </footer>
-
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const fechasAsistidas = {{ asistencias | tojson }};
-      const eventos = [];
-
-      // Marcar días asistidos (verde)
-      fechasAsistidas.forEach(f => {
-        eventos.push({
-          title: 'Asistió',
-          start: f.fecha.split("T")[0],
-          color: 'green'
-        });
-      });
-
-      // Calcular todos los días del mes actual y marcar los que no asistió (rojo)
-      const hoy = new Date();
-      const diasMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate();
-      for (let d = 1; d <= diasMes; d++) {
-        const fechaStr = new Date(hoy.getFullYear(), hoy.getMonth(), d).toISOString().split("T")[0];
-        if (!fechasAsistidas.some(x => x.fecha.startsWith(fechaStr))) {
-          eventos.push({
-            title: 'No asistió',
-            start: fechaStr,
-            color: '#e53935'
-          });
-        }
-      }
-
-      new FullCalendar.Calendar(document.getElementById('calendar'), {
-        initialView: 'dayGridMonth',
-        locale: 'es',
-        events: eventos
-      }).render();
-    });
-  </script>
+    <div class="container">
+        <h2>Asistencia de {{ curp }}</h2>
+        {% if asistencias %}
+            <p>Días que asistió:</p>
+            {% for a in asistencias %}
+                <div class="asistencia-dia verde">{{ a.fecha_hora[:10] }}</div>
+            {% endfor %}
+        {% else %}
+            <p class="rojo asistencia-dia">Sin asistencias registradas</p>
+        {% endif %}
+        <a href="/">Volver al inicio</a>
+    </div>
 </body>
 </html>
