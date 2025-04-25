@@ -36,11 +36,9 @@
   <main style="padding: 20px;">
     <h2>CURP: {{ curp }}</h2>
     <div class="calendario">
-      {% set dias_asistidos = asistencias | map(attribute='fecha_hora') | map('slice', 0, 10) | list %}
-      {% for i in range(total_dias) %}
-        {% set fecha = (start_date + i*daydelta).strftime('%Y-%m-%d') %}
-        <div class="dia {% if fecha in dias_asistidos %}asistio{% else %}falto{% endif %}">
-          {{ (start_date + i*daydelta).day }}
+      {% for dia in calendario %}
+        <div class="dia {% if dia.asistio %}asistio{% else %}falto{% endif %}">
+          {{ dia.numero }}
         </div>
       {% endfor %}
     </div>
