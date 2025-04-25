@@ -34,8 +34,10 @@ def registrar_alumno():
     curp = request.form["curp"]
     nombre = request.form["nombre"]
 
-    supabase.table("alumnos").insert({"curp": curp, "nombre": nombre}).execute()
+    # Insertar en Supabase
+    data = supabase.table("alumnos").insert({"curp": curp, "nombre": nombre}).execute()
 
+    # Crear QR
     qr = qrcode.make(curp)
     buffer = io.BytesIO()
     qr.save(buffer, format="PNG")
@@ -76,16 +78,21 @@ def consultar():
         asistencias = supabase.table("asistencias").select("*").eq("curp", curp).execute().data
 
         if not asistencias:
-            return render_template("error.html", mensaje="No hay asistencias registradas para este CURP")
+            return render_template("error.html", mensaje="No hay asistencias registradas para ese CURP")
 
-        fechas = [datetime.strptime(a["fecha_hora"][:10], "%Y-%m-%d") for a in asistencias]
+        fechas = [datetime.fromisoformat(a["fecha_hora"]) for a in asistencias]
         fechas.sort()
-
-        start_date = fechas[0]
-        end_date = fechas[-1]
+        start_date = fechas[0].date()
+        end_date = fechas[-1].date()
         total_dias = (end_date - start_date).days + 1
+        daydelta = timedelta(days=1)
 
-        return render_template("calendario.html", curp=curp, asistencias=asistencias, start_date=start_date, total_dias=total_dias)
+        return render_template("calendario.html",
+                               curp=curp,
+                               asistencias=asistencias,
+                               start_date=start_date,
+                               total_dias=total_dias,
+                               daydelta=daydelta)
     return render_template("consultar.html")
 
 if __name__ == "__main__":
