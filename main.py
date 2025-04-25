@@ -33,7 +33,6 @@ def registrar():
 def registrar_alumno():
     curp = request.form["curp"]
     nombre = request.form["nombre"]
-    fecha = datetime.now().isoformat()
 
     supabase.table("alumnos").insert({"curp": curp, "nombre": nombre}).execute()
 
@@ -56,7 +55,7 @@ def escanear():
 @app.route("/registrar_asistencia", methods=["POST"])
 def registrar_asistencia():
     curp = request.json.get("curp")
-    fecha = datetime.now().isoformat()
+    fecha_hora = datetime.now().isoformat()
 
     alumno = supabase.table("alumnos").select("*").eq("curp", curp).execute().data
     if not alumno:
@@ -65,7 +64,7 @@ def registrar_asistencia():
     supabase.table("asistencias").insert({
         "curp": curp,
         "nombre": alumno[0]["nombre"],
-        "fecha": fecha
+        "fecha_hora": fecha_hora
     }).execute()
 
     return jsonify({"status": "ok", "mensaje": "Asistencia registrada correctamente"})
