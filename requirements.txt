@@ -2,3 +2,4 @@ flask
 supabase
 qrcode[pil]
 Pillow
+gunicorn
