@@ -1,6 +1,30 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Éxito</title></head><body>
-  <h2>Registro Exitoso</h2>
-  CURP: {{curp}}<br>Nombre: {{nombre}}<br>
-  <img src="data:image/png;base64,{{qr_b64}}" alt="QR"><br>
-  <a href="/">Inicio</a>
-</body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registro Exitoso</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background-color: #f1f1f1; margin:0; padding:0; }
+    header, footer { background: #00796b; color: white; text-align: center; }
+    header { padding: 20px 0; } footer { padding: 10px 0; margin-top:20px; }
+    .container { max-width:400px; background:white; margin:20px auto; padding:20px; 
+                 box-shadow:0 4px 8px rgba(0,0,0,0.1); border-radius:8px; text-align:center; }
+    button { background:#00796b; color:white; border:none; padding:10px; border-radius:5px;
+             font-size:16px; cursor:pointer; width:100%; margin-top:10px; }
+    button:hover { background:#004d40; }
+    h2 { color:#00796b; }
+    img { margin:20px 0; }
+  </style>
+</head>
+<body>
+  <header><h1>Registro Exitoso</h1></header>
+  <div class="container">
+    <h2>¡Alumno registrado!</h2>
+    <p><strong>CURP:</strong> {{ curp }}<br><strong>Nombre:</strong> {{ nombre }}</p>
+    <img src="data:image/png;base64,{{ qr_b64 }}" alt="QR generado"/>
+    <button onclick="location.href='/'">Volver al inicio</button>
+  </div>
+  <footer>&copy; 2025 Sistema de Asistencia Escolar.</footer>
+</body>
+</html>
