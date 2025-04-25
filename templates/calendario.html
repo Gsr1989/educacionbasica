@@ -1,21 +1,65 @@
-{% extends "base.html" %}
-{% block head %}
-<link href="https://cdn.jsdelivr.net/npm/fullcalendar@6/main.min.css" rel="stylesheet">
-<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6/main.min.js"></script>
-{% endblock %}
-{% block body %}
-<div class="container">
-  <h2>Asistencias de {{curp}}</h2>
-  <div id="calendar"></div>
-  <a href="/" class="btn">Volver al inicio</a>
-</div>
-<script>
-  document.addEventListener('DOMContentLoaded', function() {
-    new FullCalendar.Calendar(document.getElementById('calendar'), {
-      initialView: 'dayGridMonth',
-      locale: 'es',
-      events: {{ eventos|tojson }}
-    }).render();
-  });
-</script>
-{% endblock %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Calendario de Asistencia</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Sistema de Asistencia Escolar</h1>
+    <p>Calendario de asistencias</p>
+  </header>
+
+  <main>
+    <div class="calendar-container">
+      <h2>Asistencias de: {{ curp }}</h2>
+      <div id="calendar"></div>
+      <a href="/" class="btn">Volver al inicio</a>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 Sistema de Asistencia Escolar</p>
+  </footer>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const fechas = {{ fechas | tojson }};
+      const hoy = new Date();
+      const eventos = [];
+
+      // Agregar días con asistencia (verde)
+      fechas.forEach(fecha => {
+        eventos.push({
+          title: 'Asistencia',
+          start: fecha,
+          color: 'green'
+        });
+      });
+
+      // Agregar días sin asistencia (rojo)
+      const diasDelMes = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0).getDate();
+      for (let d = 1; d <= diasDelMes; d++) {
+        const fechaStr = new Date(hoy.getFullYear(), hoy.getMonth(), d).toISOString().split("T")[0];
+        if (!fechas.includes(fechaStr)) {
+          eventos.push({
+            title: 'Sin asistencia',
+            start: fechaStr,
+            color: '#e53935'
+          });
+        }
+      }
+
+      new FullCalendar.Calendar(document.getElementById('calendar'), {
+        initialView: 'dayGridMonth',
+        locale: 'es',
+        events: eventos
+      }).render();
+    });
+  </script>
+</body>
+</html>
