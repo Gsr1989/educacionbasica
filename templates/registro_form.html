@@ -7,26 +7,16 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <header>
-        <h1>Sistema de Asistencia Escolar</h1>
-    </header>
-
-    <main>
-        <h2>Registrar Alumno</h2>
+    <div class="container">
+        <h2>Datos del Alumno</h2>
         <form action="/registrar_alumno" method="POST">
             <label for="curp">CURP:</label>
-            <input type="text" name="curp" id="curp" required>
-
-            <label for="nombre">Nombre del Alumno:</label>
-            <input type="text" name="nombre" id="nombre" required>
-
+            <input type="text" name="curp" required>
+            <label for="nombre">Nombre:</label>
+            <input type="text" name="nombre" required>
             <button type="submit">Registrar</button>
         </form>
         <a href="/">Volver al inicio</a>
-    </main>
-
-    <footer>
-        <p>&copy; 2025 Sistema de Asistencia Escolar.</p>
-    </footer>
+    </div>
 </body>
 </html>
