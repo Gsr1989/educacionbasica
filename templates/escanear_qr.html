@@ -1,56 +1,56 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <title>Escaneo de QR</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://unpkg.com/html5-qrcode"></script>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta charset="UTF-8">
+    <title>Escaneo de QR</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-  <header>
     <h1>Escaneo de QR</h1>
     <p>Apunta tu cámara al código QR</p>
-  </header>
 
-  <main class="center">
-    <div id="reader" style="width: 100%; max-width: 400px; margin: auto;"></div>
-    <div id="resultado" class="info" style="margin-top: 15px;"></div>
-    <a class="link" href="/">Volver al inicio</a>
-  </main>
+    <div id="reader" style="width: 300px; margin: auto;"></div>
+    <div id="resultado" style="text-align: center; margin-top: 20px;"></div>
 
-  <footer>
-    <p>&copy; 2025 Sistema de Asistencia Escolar.</p>
-  </footer>
+    <script>
+        function registrarAsistencia(curp) {
+            fetch("/registrar_asistencia", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({ curp: curp })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.status === "ok") {
+                    document.getElementById("resultado").innerHTML = `<p style="color:green;">Asistencia registrada correctamente</p>`;
+                } else {
+                    document.getElementById("resultado").innerHTML = `<p style="color:red;">${data.mensaje}</p>`;
+                }
+            })
+            .catch(error => {
+                document.getElementById("resultado").innerHTML = `<p style="color:red;">Error al registrar asistencia</p>`;
+            });
+        }
 
-  <script>
-    const resultado = document.getElementById("resultado");
-    const scanner = new Html5Qrcode("reader");
-
-    scanner.start(
-      { facingMode: "environment" },
-      { fps: 10, qrbox: 250 },
-      curp => {
-        scanner.stop();
-        fetch("/registrar_asistencia", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ curp: curp })
-        })
-        .then(r => r.json())
-        .then(data => {
-          resultado.textContent = data.mensaje || "Respuesta inesperada.";
-          resultado.className = data.status === "ok" ? "success" : "error";
-        })
-        .catch(err => {
-          resultado.textContent = "Error al registrar asistencia.";
-          resultado.className = "error";
-        });
-      },
-      error => {
-        // Ignorar errores de escaneo
-      }
-    );
-  </script>
+        const qrScanner = new Html5Qrcode("reader");
+        qrScanner.start(
+            { facingMode: "environment" },
+            {
+                fps: 10,
+                qrbox: 250
+            },
+            (decodedText) => {
+                qrScanner.stop();
+                registrarAsistencia(decodedText);
+            },
+            (errorMessage) => {
+                // No mostrar errores de escaneo
+            }
+        );
+    </script>
 </body>
 </html>
