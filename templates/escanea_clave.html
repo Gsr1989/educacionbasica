@@ -2,19 +2,27 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Escanear - Clave</title>
+    <title>Escanear Asistencia</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <div class="container">
+    <header style="background-color: #007f5f; padding: 20px; color: white; text-align: center;">
+        <h1>Sistema de Asistencia Escolar</h1>
+    </header>
+
+    <main class="container" style="max-width: 400px; margin: auto; padding: 20px; text-align: center;">
         <h2>Escanear QR</h2>
         <form method="POST">
-            <label for="clave">Contraseña:</label>
-            <input type="password" name="clave" required>
-            <button type="submit">Acceder</button>
+            <input type="password" name="clave" placeholder="Contraseña" required style="width: 100%; padding: 10px; margin-bottom: 15px;">
+            <button type="submit" class="boton">Acceder</button>
         </form>
-        <a href="/">Volver al inicio</a>
-    </div>
+        <br>
+        <a href="/" class="boton-secundario">Volver al inicio</a>
+    </main>
+
+    <footer style="background-color: #007f5f; padding: 10px; color: white; text-align: center;">
+        <p>&copy; 2025 Sistema de Asistencia Escolar.</p>
+    </footer>
 </body>
 </html>
