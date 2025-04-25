@@ -1,25 +1,59 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Inicio</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <meta charset="UTF-8">
+  <title>Sistema de Asistencia Escolar</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    .contenedor {
+      max-width: 400px;
+      margin: 40px auto;
+      padding: 20px;
+      background: white;
+      border-radius: 10px;
+      text-align: center;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .boton {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      background-color: #00695c;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      text-decoration: none;
+    }
+    .boton:hover {
+      background-color: #004d40;
+    }
+    header, footer {
+      background-color: #00695c;
+      color: white;
+      padding: 15px;
+      text-align: center;
+    }
+  </style>
 </head>
 <body>
-    <header>
-        <h1>Sistema de Asistencia Escolar</h1>
-    </header>
 
-    <div class="container">
-        <h2>Menú Principal</h2>
-        <a class="boton" href="/registrar">Registrar Alumno</a>
-        <a class="boton" href="/escanear">Escanear QR</a>
-        <a class="boton" href="/consultar">Consultar Asistencia</a>
-    </div>
+<header>
+  <h1>Sistema de Asistencia Escolar</h1>
+</header>
 
-    <footer>
-        <p>&copy; 2025 Sistema Escolar. Todos los derechos reservados.</p>
-    </footer>
+<div class="contenedor">
+  <h2>Menú Principal</h2>
+  <a href="/registrar" class="boton">Registrar Alumno</a>
+  <a href="/escanear" class="boton">Escanear QR</a>
+  <a href="/consultar" class="boton">Consultar Asistencia</a>
+</div>
+
+<footer>
+  <p>&copy; 2025 Sistema Escolar. Todos los derechos reservados.</p>
+</footer>
+
 </body>
 </html>
