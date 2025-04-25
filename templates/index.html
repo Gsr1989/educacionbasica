@@ -8,7 +8,7 @@
   <script src="https://unpkg.com/html5-qrcode"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" />
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcode/build/qrcode.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/qrcode"></script>
   <style>
     body {
       font-family: 'Segoe UI', sans-serif;
@@ -26,7 +26,7 @@
       padding: 20px;
       margin: 15px;
       background-color: white;
-      box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
       border-radius: 8px;
     }
     button {
@@ -52,14 +52,18 @@
       gap: 10px;
       margin: 15px;
     }
-    #reader, #calendar, #qrcode {
+    #reader, #calendar {
       width: 100%;
       margin-top: 20px;
+    }
+    #qrimg {
+      display: block;
+      margin: 10px auto;
+      max-width: 250px;
     }
   </style>
 </head>
 <body>
-
   <header>
     <h1>Sistema de Asistencia Escolar</h1>
     <p>Registro, Escaneo y Consulta con Calendario Visual</p>
@@ -71,15 +75,14 @@
     <button onclick="showConsulta()">Consultar Asistencia</button>
   </div>
 
-  <!-- REGISTRO DE ALUMNO -->
+  <!-- REGISTRO -->
   <div id="registro" class="container" style="display:none;">
     <h3>Registro de Alumno</h3>
     <input type="text" id="curp" placeholder="CURP del alumno">
     <input type="text" id="name" placeholder="Nombre del alumno">
     <button onclick="generarQR()">Generar QR</button>
-    <br><br>
-    <canvas id="qrcode"></canvas>
-    <button onclick="descargarQR()">Descargar QR</button>
+    <img id="qrimg" src="" alt="QR" />
+    <a id="descargarQR" style="display:none;" download="qr_alumno.png">Descargar QR</a>
   </div>
 
   <!-- ESCANEO -->
@@ -122,18 +125,13 @@
       if (!curp || !name) return alert("Completa los datos");
 
       const qrData = JSON.stringify({ curp, name });
-      QRCode.toCanvas(document.getElementById("qrcode"), qrData, function (error) {
-        if (error) console.error(error);
-        else alert("QR generado correctamente");
-      });
-    }
 
-    function descargarQR() {
-      const canvas = document.getElementById("qrcode");
-      const link = document.createElement("a");
-      link.download = "qr_alumno.png";
-      link.href = canvas.toDataURL();
-      link.click();
+      QRCode.toDataURL(qrData, { width: 250 }, function (err, url) {
+        if (err) return alert("Error generando QR");
+        document.getElementById("qrimg").src = url;
+        document.getElementById("descargarQR").href = url;
+        document.getElementById("descargarQR").style.display = "block";
+      });
     }
 
     function scanQR() {
