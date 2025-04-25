@@ -7,27 +7,14 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <header>
-        <h1>Consulta de Asistencias</h1>
-    </header>
-
-    <main class="center">
+    <div class="container">
+        <h2>Consulta de Asistencia</h2>
         <form method="POST">
-            <label for="curp">CURP del alumno:</label>
-            <input type="text" name="curp" id="curp" required>
-
+            <label for="curp">Ingrese CURP:</label>
+            <input type="text" name="curp" required>
             <button type="submit">Consultar</button>
         </form>
-
-        {% if error %}
-            <p class="error">{{ error }}</p>
-        {% endif %}
-
-        <a class="link" href="/">Volver al inicio</a>
-    </main>
-
-    <footer>
-        <p>&copy; 2025 Sistema de Asistencia Escolar.</p>
-    </footer>
+        <a href="/">Volver al inicio</a>
+    </div>
 </body>
 </html>
