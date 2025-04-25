@@ -1,34 +1,33 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Consultar Asistencia</title>
-  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <meta charset="UTF-8">
+    <title>Consultar Asistencia</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-  <header>
-    <h1>Sistema de Asistencia Escolar</h1>
-    <p>Consulta de asistencias por CURP</p>
-  </header>
+    <header>
+        <h1>Consulta de Asistencias</h1>
+    </header>
 
-  <main>
-    <div class="form-container">
-      <h2>Consultar asistencias</h2>
-      {% if error %}
-        <div class="alert">{{ error }}</div>
-      {% endif %}
-      <form method="POST">
-        <input type="text" name="curp" placeholder="CURP del alumno" required>
-        <input type="password" name="password" placeholder="Contraseña de acceso" required>
-        <button type="submit">Consultar</button>
-      </form>
-      <a class="btn" href="/">Volver al inicio</a>
-    </div>
-  </main>
+    <main class="center">
+        <form method="POST">
+            <label for="curp">CURP del alumno:</label>
+            <input type="text" name="curp" id="curp" required>
 
-  <footer>
-    <p>© 2025 Sistema de Asistencia Escolar</p>
-  </footer>
+            <button type="submit">Consultar</button>
+        </form>
+
+        {% if error %}
+            <p class="error">{{ error }}</p>
+        {% endif %}
+
+        <a class="link" href="/">Volver al inicio</a>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Sistema de Asistencia Escolar.</p>
+    </footer>
 </body>
 </html>
