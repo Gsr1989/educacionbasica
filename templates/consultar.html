@@ -1,6 +1,30 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Consultar</title></head><body>
-  <h2>Consultar Asistencias</h2>
-  <form method="post">
-    CURP: <input name="curp"><button type="submit">Consultar</button>
-  </form>
-</body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Consultar Asistencia</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background-color: #f1f1f1; margin:0; padding:0; }
+    header, footer { background: #00796b; color: white; text-align: center; }
+    header { padding: 20px 0; } footer { padding: 10px 0; margin-top:20px; }
+    .container { max-width:400px; background:white; margin:20px auto; padding:20px; 
+                 box-shadow:0 4px 8px rgba(0,0,0,0.1); border-radius:8px; text-align:center; }
+    input, button { width:100%; padding:10px; margin:10px 0; border-radius:5px; }
+    input { border:1px solid #ccc; }
+    button { background:#00796b; color:white; border:none; font-size:16px; cursor:pointer; }
+    button:hover { background:#004d40; }
+    h2 { color:#00796b; }
+  </style>
+</head>
+<body>
+  <header><h1>Consultar Asistencia</h1></header>
+  <div class="container">
+    <form action="/consultar" method="post">
+      <input name="curp" placeholder="CURP del alumno" required/>
+      <button type="submit">Ver Asistencias</button>
+    </form>
+  </div>
+  <footer>&copy; 2025 Sistema de Asistencia Escolar.</footer>
+</body>
+</html>
