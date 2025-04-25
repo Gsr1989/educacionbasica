@@ -31,12 +31,14 @@ def registrar():
 def registrar_alumno():
     curp = request.form["curp"]
     nombre = request.form["nombre"]
+
     supabase.table("alumnos").insert({"curp": curp, "nombre": nombre}).execute()
 
     qr = qrcode.make(curp)
     buffer = io.BytesIO()
     qr.save(buffer, format="PNG")
     qr_base64 = base64.b64encode(buffer.getvalue()).decode("utf-8")
+
     return render_template("registro_exitoso.html", curp=curp, nombre=nombre, qr_base64=qr_base64)
 
 @app.route("/escanear", methods=["GET", "POST"])
@@ -52,22 +54,42 @@ def escanear():
 def registrar_asistencia():
     curp = request.json.get("curp")
     fecha_hora = datetime.now().isoformat()
-    alumno = supabase.table("alumnos").select("*").eq("curp", curp).execute().data
+
+    alumno_result = supabase.table("alumnos").select("*").eq("curp", curp).execute()
+    alumno = alumno_result.data
+
     if not alumno:
         return jsonify({"status": "error", "mensaje": "CURP no encontrado"})
+
     supabase.table("asistencias").insert({
         "curp": curp,
         "nombre": alumno[0]["nombre"],
         "fecha_hora": fecha_hora
     }).execute()
+
     return jsonify({"status": "ok", "mensaje": "Asistencia registrada correctamente"})
 
 @app.route("/consultar", methods=["GET", "POST"])
 def consultar():
     if request.method == "POST":
         curp = request.form["curp"]
-        asistencias = supabase.table("asistencias").select("*").eq("curp", curp).execute().data
-        return render_template("calendario.html", curp=curp, asistencias=asistencias)
+        asistencias_result = supabase.table("asistencias").select("*").eq("curp", curp).execute()
+        asistencias = asistencias_result.data
+
+        fechas = []
+        for asistencia in asistencias:
+            try:
+                fecha = asistencia["fecha_hora"]
+                fecha_obj = datetime.fromisoformat(fecha)
+                fechas.append(fecha_obj.strftime("%Y-%m-%d"))
+            except Exception:
+                continue
+
+        if not fechas:
+            return render_template("error.html", mensaje="No se encontraron asistencias para este CURP")
+
+        return render_template("calendario.html", curp=curp, fechas=fechas)
+
     return render_template("consultar.html")
 
 if __name__ == "__main__":
