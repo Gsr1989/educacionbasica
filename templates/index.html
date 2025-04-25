@@ -52,12 +52,8 @@
       gap: 10px;
       margin: 15px;
     }
-    #reader {
+    #reader, #calendar, #qrcode {
       width: 100%;
-      margin-top: 10px;
-    }
-    #calendar {
-      max-width: 100%;
       margin-top: 20px;
     }
   </style>
@@ -81,7 +77,9 @@
     <input type="text" id="curp" placeholder="CURP del alumno">
     <input type="text" id="name" placeholder="Nombre del alumno">
     <button onclick="generarQR()">Generar QR</button>
-    <canvas id="qrcode" style="margin-top:20px;"></canvas>
+    <br><br>
+    <canvas id="qrcode"></canvas>
+    <button onclick="descargarQR()">Descargar QR</button>
   </div>
 
   <!-- ESCANEO -->
@@ -130,6 +128,14 @@
       });
     }
 
+    function descargarQR() {
+      const canvas = document.getElementById("qrcode");
+      const link = document.createElement("a");
+      link.download = "qr_alumno.png";
+      link.href = canvas.toDataURL();
+      link.click();
+    }
+
     function scanQR() {
       document.getElementById("registro").style.display = "none";
       document.getElementById("consulta").style.display = "none";
@@ -146,10 +152,10 @@
 
           try {
             const datos = JSON.parse(message);
-            const { curp, name } = datos;
-            const { error } = await supabase.from("asistencias").insert([{ curp: curp, nombre: name }]);
+            if (!datos.curp || !datos.name) throw new Error("Formato incorrecto");
+            const { error } = await supabase.from("asistencias").insert([{ curp: datos.curp, nombre: datos.name }]);
             if (error) alert("Error al guardar en Supabase");
-            else alert("Asistencia registrada para " + name);
+            else alert("Asistencia registrada para " + datos.name);
           } catch (err) {
             alert("QR inválido.");
           }
@@ -178,13 +184,11 @@
         return;
       }
 
-      const fechasAsistidas = data.map(row => {
-        return {
-          title: "Asistió",
-          start: row.fecha_hora,
-          color: "green"
-        };
-      });
+      const fechasAsistidas = data.map(row => ({
+        title: "Asistió",
+        start: row.fecha_hora,
+        color: "green"
+      }));
 
       const diasDelMes = [];
       const hoy = new Date();
