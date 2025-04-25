@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrar Alumno</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Sistema de Asistencia Escolar</h1>
+    </header>
+
+    <main>
+        <h2>Registrar Alumno</h2>
+        <form action="/registrar_alumno" method="POST">
+            <label for="curp">CURP:</label>
+            <input type="text" name="curp" id="curp" required>
+
+            <label for="nombre">Nombre del Alumno:</label>
+            <input type="text" name="nombre" id="nombre" required>
+
+            <button type="submit">Registrar</button>
+        </form>
+        <a href="/">Volver al inicio</a>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Sistema de Asistencia Escolar.</p>
+    </footer>
+</body>
+</html>
