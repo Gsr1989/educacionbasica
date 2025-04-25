@@ -1,0 +1,25 @@
+@app.route("/registrar_asistencia", methods=["POST"])
+def registrar_asistencia():
+    try:
+        data = request.get_json()
+        curp = data.get("curp")
+        fecha = datetime.now().isoformat()
+
+        # Verifica si existe ese alumno
+        resultado = supabase.table("alumnos").select("*").eq("curp", curp).execute()
+        if not resultado.data:
+            return jsonify({"status": "error", "mensaje": "CURP no encontrado"})
+
+        nombre = resultado.data[0]["nombre"]
+
+        # Registrar la asistencia
+        supabase.table("asistencias").insert({
+            "curp": curp,
+            "nombre": nombre,
+            "fecha_hora": fecha
+        }).execute()
+
+        return jsonify({"status": "ok", "mensaje": "Asistencia registrada correctamente"})
+
+    except Exception as e:
+        return jsonify({"status": "error", "mensaje": "Error: " + str(e)})
