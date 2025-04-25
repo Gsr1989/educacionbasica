@@ -36,7 +36,7 @@
     <h3>Registro de Alumno</h3>
     <input type="text" id="curp" placeholder="CURP del alumno">
     <input type="text" id="name" placeholder="Nombre del alumno">
-    <button onclick="generarQR()">Generar QR</button>
+    <button onclick="registrarAlumno()">Generar QR</button>
     <div id="qr-container"></div>
     <a id="descargarQR" download="qr_alumno.png" style="display:none;"><button>Descargar QR</button></a>
   </div>
@@ -73,11 +73,16 @@
       }
     }
 
-    function generarQR() {
+    async function registrarAlumno() {
       const curp = document.getElementById("curp").value.trim();
       const name = document.getElementById("name").value.trim();
       if (!curp || !name) return alert("Llena los campos");
 
+      // Guarda en tabla alumnos
+      const { error } = await supabase.from("alumnos").insert([{ curp, nombre: name }]);
+      if (error) return alert("Ya existe este alumno o hubo error.");
+
+      // Genera QR
       const data = JSON.stringify({ curp, name });
       const container = document.getElementById("qr-container");
       container.innerHTML = "";
@@ -109,7 +114,6 @@
         async message => {
           qr.stop();
           document.getElementById("reader").style.display = "none";
-          document.getElementById("scannerResult").style.display = "block";
           try {
             const datos = JSON.parse(message);
             if (!datos.curp || !datos.name) throw new Error();
