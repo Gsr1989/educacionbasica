@@ -13,7 +13,7 @@ SUPABASE_URL = "https://axgqvhgtbzkraytzaomw.supabase.co"
 SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4Z3F2aGd0YnprcmF5dHphb213Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1NDAwNzUsImV4cCI6MjA2MTExNjA3NX0.fWWMBg84zjeaCDAg-DV1SOJwVjbWDzKVsIMUTuVUVsY"
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# Contraseña
+# Contraseña de seguridad
 CONTRASENA = "Nivelbasico2025"
 
 @app.route("/")
@@ -33,6 +33,11 @@ def registrar():
 def registrar_alumno():
     curp = request.form["curp"]
     nombre = request.form["nombre"]
+
+    # Validar duplicado
+    existente = supabase.table("alumnos").select("*").eq("curp", curp).execute().data
+    if existente:
+        return render_template("error.html", mensaje="CURP ya registrado")
 
     supabase.table("alumnos").insert({"curp": curp, "nombre": nombre}).execute()
 
@@ -76,23 +81,18 @@ def consultar():
         asistencias = supabase.table("asistencias").select("*").eq("curp", curp).execute().data
 
         if not asistencias:
-            return render_template("error.html", mensaje="No hay asistencias para este CURP.")
+            return render_template("error.html", mensaje="No se encontró asistencia para este CURP")
 
-        # Fechas asistidas
-        fechas = [a["fecha_hora"][:10] for a in asistencias]
+        fechas_asistencias = [datetime.fromisoformat(a["fecha_hora"]) for a in asistencias]
+        primera_fecha = min(fechas_asistencias)
+        ultima_fecha = max(fechas_asistencias)
+        total_dias = (ultima_fecha - primera_fecha).days + 1
 
-        hoy = datetime.now()
-        start_date = datetime(hoy.year, hoy.month, 1)
-
-        if hoy.month == 2:
-            total_dias = 29 if hoy.year % 4 == 0 else 28
-        elif hoy.month in [4, 6, 9, 11]:
-            total_dias = 30
-        else:
-            total_dias = 31
-
-        return render_template("calendario.html", curp=curp, asistencias=asistencias,
-                               total_dias=total_dias, start_date=start_date, timedelta=timedelta)
+        return render_template("calendario.html",
+                               curp=curp,
+                               asistencias=asistencias,
+                               start_date=primera_fecha,
+                               total_dias=total_dias)
     return render_template("consultar.html")
 
 if __name__ == "__main__":
