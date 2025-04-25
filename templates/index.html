@@ -1,168 +1,87 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta charset="UTF-8">
   <title>Sistema de Asistencia Escolar</title>
-  <script src="https://unpkg.com/@supabase/supabase-js"></script>
-  <script src="https://unpkg.com/html5-qrcode"></script>
-  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/qrcodejs/qrcode.min.js"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" />
+  <meta name="viewport" content="width=device-width, initial-scale=1">
   <style>
-    body { font-family: 'Segoe UI', sans-serif; background-color: #f1f1f1; margin: 0; padding: 0; }
-    header, footer { background: #00796b; color: white; text-align: center; padding: 15px 10px; }
-    .container { padding: 20px; margin: 15px; background-color: white; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
-    button { background-color: #00796b; color: white; padding: 10px; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; width: 100%; margin-top: 10px; }
-    input { width: 100%; padding: 10px; margin: 10px 0; border-radius: 5px; border: 1px solid #ccc; }
-    .button-container { display: flex; flex-direction: column; gap: 10px; margin: 15px; }
-    #qr-container { text-align: center; margin-top: 15px; }
-    #calendar, #reader { margin-top: 20px; }
+    body {
+      font-family: Arial, sans-serif;
+      background: #ffffff;
+      margin: 0;
+      padding: 0;
+    }
+
+    header {
+      background-color: #00695c;
+      color: white;
+      text-align: center;
+      padding: 20px 10px;
+    }
+
+    h1 {
+      font-size: 22px;
+      margin: 5px 0;
+    }
+
+    h2 {
+      font-size: 14px;
+      font-weight: normal;
+      margin: 0;
+    }
+
+    .container {
+      padding: 20px;
+      text-align: center;
+    }
+
+    .btn {
+      display: block;
+      width: 90%;
+      max-width: 300px;
+      margin: 10px auto;
+      padding: 15px;
+      background-color: #00897b;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .btn:hover {
+      background-color: #00695c;
+    }
+
+    footer {
+      background-color: #00695c;
+      color: white;
+      text-align: center;
+      padding: 12px 10px;
+      font-size: 13px;
+      position: fixed;
+      width: 100%;
+      bottom: 0;
+    }
   </style>
 </head>
 <body>
+
   <header>
     <h1>Sistema de Asistencia Escolar</h1>
-    <p>Registro, Escaneo y Consulta con Calendario Visual</p>
+    <h2>Registro, Escaneo y Consulta con Calendario Visual</h2>
   </header>
 
-  <div class="button-container">
-    <button onclick="accederRegistro()">Registrar Alumno</button>
-    <button onclick="scanQR()">Escanear QR</button>
-    <button onclick="showConsulta()">Consultar Asistencia</button>
-  </div>
-
-  <div id="registro" class="container" style="display:none;">
-    <h3>Registro de Alumno</h3>
-    <input type="text" id="curp" placeholder="CURP del alumno">
-    <input type="text" id="name" placeholder="Nombre del alumno">
-    <button onclick="registrarAlumno()">Generar QR</button>
-    <div id="qr-container"></div>
-    <a id="descargarQR" download="qr_alumno.png" style="display:none;"><button>Descargar QR</button></a>
-  </div>
-
-  <div id="reader" class="container" style="display:none;"></div>
-  <div id="scannerResult" class="container" style="display:none;"></div>
-
-  <div id="consulta" class="container" style="display:none;">
-    <h3>Consulta por CURP</h3>
-    <input type="text" id="curpConsulta" placeholder="Ingresa el CURP del alumno">
-    <button onclick="consultar()">Consultar</button>
-    <div id="calendar"></div>
+  <div class="container">
+    <a href="/registrar" class="btn">Registrar Alumno</a>
+    <a href="/escanear" class="btn">Escanear QR</a>
+    <a href="/consultar" class="btn">Consultar Asistencia</a>
   </div>
 
   <footer>
-    <p>&copy; 2025 - Todos los derechos reservados</p>
+    © 2025 - Todos los derechos reservados
   </footer>
 
-  <script>
-    const supabase = supabase.createClient(
-      "https://axgqvhgtbzkraytzaomw.supabase.co",
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4Z3F2aGd0YnprcmF5dHphb213Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1NDAwNzUsImV4cCI6MjA2MTExNjA3NX0.fWWMBg84zjeaCDAg-DV1SOJwVjbWDzKVsIMUTuVUVsY"
-    );
-
-    function accederRegistro() {
-      const clave = prompt("Ingresa la contraseña:");
-      if (clave === "qrGuardia2025") {
-        document.getElementById("registro").style.display = "block";
-        document.getElementById("reader").style.display = "none";
-        document.getElementById("consulta").style.display = "none";
-        document.getElementById("scannerResult").style.display = "none";
-      } else {
-        alert("Acceso denegado");
-      }
-    }
-
-    async function registrarAlumno() {
-      const curp = document.getElementById("curp").value.trim();
-      const name = document.getElementById("name").value.trim();
-      if (!curp || !name) return alert("Llena los campos");
-
-      // Guarda en tabla alumnos
-      const { error } = await supabase.from("alumnos").insert([{ curp, nombre: name }]);
-      if (error) return alert("Ya existe este alumno o hubo error.");
-
-      // Genera QR
-      const data = JSON.stringify({ curp, name });
-      const container = document.getElementById("qr-container");
-      container.innerHTML = "";
-
-      const qr = new QRCode(container, {
-        text: data,
-        width: 200,
-        height: 200
-      });
-
-      setTimeout(() => {
-        const img = container.querySelector("img");
-        if (img) {
-          const link = document.getElementById("descargarQR");
-          link.href = img.src;
-          link.style.display = "inline-block";
-        }
-      }, 1000);
-    }
-
-    function scanQR() {
-      document.getElementById("registro").style.display = "none";
-      document.getElementById("consulta").style.display = "none";
-      document.getElementById("scannerResult").style.display = "none";
-      document.getElementById("reader").style.display = "block";
-
-      const qr = new Html5Qrcode("reader");
-      qr.start({ facingMode: "environment" }, { fps: 10, qrbox: 250 },
-        async message => {
-          qr.stop();
-          document.getElementById("reader").style.display = "none";
-          try {
-            const datos = JSON.parse(message);
-            if (!datos.curp || !datos.name) throw new Error();
-            await supabase.from("asistencias").insert([{ curp: datos.curp, nombre: datos.name }]);
-            alert("Asistencia registrada para " + datos.name);
-          } catch {
-            alert("QR inválido.");
-          }
-        }
-      );
-    }
-
-    function showConsulta() {
-      document.getElementById("consulta").style.display = "block";
-      document.getElementById("registro").style.display = "none";
-      document.getElementById("reader").style.display = "none";
-      document.getElementById("scannerResult").style.display = "none";
-    }
-
-    async function consultar() {
-      const curp = document.getElementById("curpConsulta").value.trim();
-      if (!curp) return alert("Escribe el CURP");
-
-      const { data } = await supabase.from("asistencias").select("fecha_hora").eq("curp", curp);
-      if (!data || data.length === 0) {
-        document.getElementById("calendar").innerHTML = "No se encontraron asistencias.";
-        return;
-      }
-
-      const asistencias = data.map(r => ({ title: "Asistió", start: r.fecha_hora, color: "green" }));
-      const diasDelMes = [];
-      const hoy = new Date();
-      const inicio = new Date(hoy.getFullYear(), hoy.getMonth(), 1);
-      const fin = new Date(hoy.getFullYear(), hoy.getMonth() + 1, 0);
-      for (let d = new Date(inicio); d <= fin; d.setDate(d.getDate() + 1)) {
-        const iso = d.toISOString().split("T")[0];
-        if (!asistencias.find(e => e.start.startsWith(iso))) {
-          diasDelMes.push({ title: "Faltó", start: iso, color: "red" });
-        }
-      }
-
-      const cal = document.getElementById("calendar");
-      cal.innerHTML = "";
-      new FullCalendar.Calendar(cal, {
-        initialView: "dayGridMonth",
-        locale: "es",
-        events: [...asistencias, ...diasDelMes]
-      }).render();
-    }
-  </script>
 </body>
 </html>
