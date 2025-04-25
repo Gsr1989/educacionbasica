@@ -1,45 +1,25 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Sistema de Asistencia Escolar</title>
-  <style>
-    body { font-family: 'Segoe UI', sans-serif; background-color: #f1f1f1; margin: 0; padding: 0; }
-    header { background: #00796b; color: white; text-align: center; padding: 20px 0; }
-    footer { background: #00796b; color: white; text-align: center; padding: 10px 0; margin-top: 20px; }
-    .button-container { max-width: 400px; margin: 20px auto; }
-    button { background-color: #00796b; color: white; padding: 10px; border: none; border-radius: 5px; 
-             cursor: pointer; font-size: 16px; width: 100%; margin: 10px 0; }
-    button:hover { background-color: #004d40; }
-  </style>
+    <meta charset="UTF-8">
+    <title>Sistema de Asistencia Escolar</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-  <header>
-    <h1>Sistema de Asistencia Escolar</h1>
-    <p>Registro, Escaneo y Consulta con Calendario Visual</p>
-  </header>
+    <header>
+        <h1>Sistema de Asistencia Escolar</h1>
+        <p>Registro, Escaneo y Consulta con Calendario Visual</p>
+    </header>
 
-  <div class="button-container">
-    <button onclick="location.href='/registrar'">Registrar Alumno</button>
-    <button onclick="scanQR()">Escanear QR</button>
-    <button onclick="location.href='/consultar'">Consultar Asistencia</button>
-  </div>
+    <main class="center">
+        <a class="button" href="/registrar">Registrar Alumno</a>
+        <a class="button" href="/escanear">Escanear QR</a>
+        <a class="button" href="/consultar">Consultar Asistencias</a>
+    </main>
 
-  <footer>&copy; 2025 Sistema de Asistencia Escolar. Todos los derechos reservados.</footer>
-
-  <script>
-    async function scanQR() {
-      const curp = prompt("Introduce la CURP (simulación de QR):");
-      if (!curp) return;
-      const res = await fetch("/escanear", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ curp })
-      });
-      const j = await res.json().catch(()=>({mensaje:"Error"}));
-      alert(j.mensaje || "Error desconocido");
-    }
-  </script>
+    <footer>
+        <p>&copy; 2025 Sistema de Asistencia Escolar.</p>
+    </footer>
 </body>
 </html>
