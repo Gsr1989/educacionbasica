@@ -1,45 +1,72 @@
-{% extends "base.html" %}
-{% block head %}
-<script src="https://unpkg.com/html5-qrcode"></script>
-{% endblock %}
-{% block body %}
-<div class="container">
-  <h2>Escanear QR</h2>
-  <div id="auth">
-    <input id="pwd" type="password" placeholder="Contraseña">
-    <button id="goScan">Ingresar</button>
-    <div id="authErr" class="alert"></div>
-  </div>
-  <div id="reader" style="width:100%;display:none;"></div>
-  <div id="res" class="alert"></div>
-</div>
-<script>
-const pwdFld = document.getElementById("pwd"),
-      authErr = document.getElementById("authErr"),
-      authDiv = document.getElementById("auth"),
-      reader  = document.getElementById("reader"),
-      resDiv  = document.getElementById("res");
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Escanear Asistencia</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="https://unpkg.com/html5-qrcode"></script>
+</head>
+<body>
+  <header>
+    <h1>Sistema de Asistencia Escolar</h1>
+    <p>Escaneo de QR para registrar asistencia</p>
+  </header>
 
-document.getElementById("goScan").onclick = () => {
-  if (pwdFld.value!=="Nivelbasico2025") {
-    authErr.textContent="Contraseña inválida";
-    return;
-  }
-  authDiv.style.display="none";
-  reader.style.display="block";
-  const html5QrcodeScanner = new Html5Qrcode("reader");
-  html5QrcodeScanner.start(
-    { facingMode: "environment" },
-    { fps: 10, qrbox: 250 },
-    qr => {
-      html5QrcodeScanner.stop();
-      fetch("/escanear", {
-        method:"POST", headers: {'Content-Type':'application/json'},
-        body: JSON.stringify({ curp:qr, password:pwdFld.value })
-      })
-      .then(r=>r.json()).then(j=> resDiv.textContent=j.mensaje);
-    }
-  );
-};
-</script>
-{% endblock %}
+  <main>
+    <div class="form-container">
+      <h2>Escanear QR</h2>
+
+      {% if error %}
+        <div class="alert">{{ error }}</div>
+      {% endif %}
+
+      <input type="password" id="password" placeholder="Contraseña de acceso" required>
+      <button id="startScan">Iniciar escaneo</button>
+
+      <div id="reader" style="width: 100%; margin-top: 20px;"></div>
+      <div id="resultado" class="alert" style="display: none;"></div>
+
+      <a class="btn" href="/">Volver al inicio</a>
+    </div>
+  </main>
+
+  <footer>
+    <p>© 2025 Sistema de Asistencia Escolar</p>
+  </footer>
+
+  <script>
+    const startBtn = document.getElementById("startScan");
+    const reader = document.getElementById("reader");
+    const resultado = document.getElementById("resultado");
+
+    startBtn.addEventListener("click", () => {
+      const password = document.getElementById("password").value;
+      if (password !== "Nivelbasico2025") {
+        resultado.style.display = "block";
+        resultado.innerText = "Contraseña incorrecta";
+        return;
+      }
+
+      const scanner = new Html5Qrcode("reader");
+      scanner.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: 250 },
+        qr => {
+          scanner.stop();
+          fetch("/escanear", {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: `curp=${qr}&password=${password}`
+          })
+          .then(res => res.text())
+          .then(html => document.body.innerHTML = html);
+        },
+        err => {
+          console.warn("QR no detectado: ", err);
+        }
+      );
+    });
+  </script>
+</body>
+</html>
