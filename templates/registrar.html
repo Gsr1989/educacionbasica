@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>Registro de Alumno</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e6f2f2;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background-color: #006666;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+    .contenedor {
+      padding: 20px;
+      max-width: 500px;
+      margin: auto;
+    }
+    input, button {
+      width: 100%;
+      padding: 15px;
+      margin: 10px 0;
+      font-size: 16px;
+    }
+    button {
+      background-color: #008080;
+      color: white;
+      border: none;
+      border-radius: 5px;
+    }
+    button:hover {
+      background-color: #006666;
+    }
+    .qr-preview {
+      text-align: center;
+      margin-top: 20px;
+    }
+    .qr-preview img {
+      width: 200px;
+      height: 200px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Registro de Alumno</h1>
+  </header>
+  <div class="contenedor">
+    <form action="/registrar" method="post">
+      <input type="text" name="curp" placeholder="CURP del alumno" required>
+      <input type="text" name="nombre" placeholder="Nombre del alumno" required>
+      <button type="submit">Generar QR</button>
+    </form>
+
+    {% if qr_url %}
+    <div class="qr-preview">
+      <p><strong>QR generado:</strong></p>
+      <img src="{{ qr_url }}" alt="QR">
+      <br>
+      <a href="{{ qr_url }}" download="qr_alumno.png">
+        <button>Descargar QR</button>
+      </a>
+    </div>
+    {% endif %}
+  </div>
+</body>
+</html>
