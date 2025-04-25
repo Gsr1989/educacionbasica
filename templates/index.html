@@ -2,86 +2,14 @@
 <html lang="es">
 <head>
   <meta charset="UTF-8">
-  <title>Sistema de Asistencia Escolar</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background: #ffffff;
-      margin: 0;
-      padding: 0;
-    }
-
-    header {
-      background-color: #00695c;
-      color: white;
-      text-align: center;
-      padding: 20px 10px;
-    }
-
-    h1 {
-      font-size: 22px;
-      margin: 5px 0;
-    }
-
-    h2 {
-      font-size: 14px;
-      font-weight: normal;
-      margin: 0;
-    }
-
-    .container {
-      padding: 20px;
-      text-align: center;
-    }
-
-    .btn {
-      display: block;
-      width: 90%;
-      max-width: 300px;
-      margin: 10px auto;
-      padding: 15px;
-      background-color: #00897b;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      font-size: 16px;
-      cursor: pointer;
-      transition: background 0.2s;
-    }
-
-    .btn:hover {
-      background-color: #00695c;
-    }
-
-    footer {
-      background-color: #00695c;
-      color: white;
-      text-align: center;
-      padding: 12px 10px;
-      font-size: 13px;
-      position: fixed;
-      width: 100%;
-      bottom: 0;
-    }
-  </style>
+  <title>Inicio</title>
 </head>
 <body>
-
-  <header>
-    <h1>Sistema de Asistencia Escolar</h1>
-    <h2>Registro, Escaneo y Consulta con Calendario Visual</h2>
-  </header>
-
-  <div class="container">
-    <a href="/registrar" class="btn">Registrar Alumno</a>
-    <a href="/escanear" class="btn">Escanear QR</a>
-    <a href="/consultar" class="btn">Consultar Asistencia</a>
-  </div>
-
-  <footer>
-    © 2025 - Todos los derechos reservados
-  </footer>
-
+  <h1>Sistema de Asistencia Escolar</h1>
+  <ul>
+    <li><a href="/registrar">Registrar Alumno</a></li>
+    <li><a href="#" onclick="location.href='/escanear.html';">Escanear QR</a></li>
+    <li><a href="/consultar">Consultar Asistencia</a></li>
+  </ul>
 </body>
 </html>
