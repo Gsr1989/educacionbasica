@@ -1,19 +1,32 @@
 <!DOCTYPE html>
 <html lang="es">
-<head><meta charset="UTF-8"><title>Registrar</title></head>
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Registrar Alumno</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background-color: #f1f1f1; margin:0; padding:0; }
+    header, footer { background: #00796b; color: white; text-align: center; }
+    header { padding: 20px 0; } footer { padding: 10px 0; margin-top:20px; }
+    .container { max-width:400px; background:white; margin:20px auto; padding:20px; 
+                 box-shadow:0 4px 8px rgba(0,0,0,0.1); border-radius:8px; }
+    input, button { width:100%; padding:10px; margin:10px 0; border-radius:5px; }
+    input { border:1px solid #ccc; }
+    button { background:#00796b; color:white; border:none; font-size:16px; cursor:pointer; }
+    button:hover { background:#004d40; }
+    h2 { color:#00796b; text-align:center; }
+  </style>
+</head>
 <body>
-  <h2>Registro de Alumno</h2>
-  {% with msgs = get_flashed_messages(with_categories=true) %}
-    {% if msgs %}
-      <ul>
-      {% for cat,msg in msgs %}<li class="{{cat}}">{{msg}}</li>{% endfor %}
-      </ul>
-    {% endif %}
-  {% endwith %}
-  <form action="" method="post">
-    CURP: <input name="curp"><br>
-    Nombre: <input name="nombre"><br>
-    <button type="submit">Generar QR</button>
-  </form>
+  <header><h1>Registrar Alumno</h1></header>
+  <div class="container">
+    <h2>Datos del alumno</h2>
+    <form action="/registrar" method="post">
+      <input name="curp" placeholder="CURP" required />
+      <input name="nombre" placeholder="Nombre completo" required />
+      <button type="submit">Generar QR y Guardar</button>
+    </form>
+  </div>
+  <footer>&copy; 2025 Sistema de Asistencia Escolar.</footer>
 </body>
 </html>
