@@ -2,24 +2,24 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Sistema de Asistencia Escolar</title>
+    <title>Inicio</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
     <header>
         <h1>Sistema de Asistencia Escolar</h1>
-        <p>Registro, Escaneo y Consulta con Calendario Visual</p>
     </header>
 
-    <main class="center">
-        <a class="button" href="/registrar">Registrar Alumno</a>
-        <a class="button" href="/escanear">Escanear QR</a>
-        <a class="button" href="/consultar">Consultar Asistencias</a>
-    </main>
+    <div class="container">
+        <h2>Menú Principal</h2>
+        <a class="boton" href="/registrar">Registrar Alumno</a>
+        <a class="boton" href="/escanear">Escanear QR</a>
+        <a class="boton" href="/consultar">Consultar Asistencia</a>
+    </div>
 
     <footer>
-        <p>&copy; 2025 Sistema de Asistencia Escolar.</p>
+        <p>&copy; 2025 Sistema Escolar. Todos los derechos reservados.</p>
     </footer>
 </body>
 </html>
