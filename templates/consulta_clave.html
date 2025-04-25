@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Consulta de Asistencias</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>Sistema de Asistencia Escolar</h1>
+        <p>Consulta de asistencias por CURP</p>
+    </header>
+
+    <main>
+        <h2>Consultar asistencias</h2>
+        <form method="POST">
+            <input type="text" name="curp" placeholder="CURP del alumno" required>
+            <input type="password" name="clave" placeholder="Contraseña de acceso" required>
+            <button type="submit">Consultar</button>
+        </form>
+        <a href="{{ url_for('index') }}">Volver al inicio</a>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Sistema de Asistencia Escolar.</p>
+    </footer>
+</body>
+</html>
