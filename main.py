@@ -1,6 +1,6 @@
-from flask import Flask, render_template, request, jsonify
+from flask import Flask, render_template, request, redirect, url_for, jsonify
 from supabase import create_client
-from datetime import datetime
+from datetime import datetime, timedelta
 import qrcode
 import io
 import base64
@@ -8,10 +8,12 @@ import base64
 app = Flask(__name__)
 app.secret_key = "clave_super_secreta"
 
+# Conexión Supabase
 SUPABASE_URL = "https://axgqvhgtbzkraytzaomw.supabase.co"
 SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4Z3F2aGd0YnprcmF5dHphb213Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1NDAwNzUsImV4cCI6MjA2MTExNjA3NX0.fWWMBg84zjeaCDAg-DV1SOJwVjbWDzKVsIMUTuVUVsY"
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
+# Contraseña
 CONTRASENA = "Nivelbasico2025"
 
 @app.route("/")
@@ -29,19 +31,19 @@ def registrar():
 
 @app.route("/registrar_alumno", methods=["POST"])
 def registrar_alumno():
-    try:
-        curp = request.form["curp"]
-        nombre = request.form["nombre"]
-        supabase.table("alumnos").insert({"curp": curp, "nombre": nombre}).execute()
+    curp = request.form["curp"]
+    nombre = request.form["nombre"]
 
-        qr = qrcode.make(curp)
-        buffer = io.BytesIO()
-        qr.save(buffer, format="PNG")
-        qr_base64 = base64.b64encode(buffer.getvalue()).decode("utf-8")
+    # Insertar en Supabase
+    supabase.table("alumnos").insert({"curp": curp, "nombre": nombre}).execute()
 
-        return render_template("registro_exitoso.html", curp=curp, nombre=nombre, qr_base64=qr_base64)
-    except Exception as e:
-        return render_template("error.html", mensaje="Error al registrar alumno: " + str(e))
+    # Generar QR
+    qr = qrcode.make(curp)
+    buffer = io.BytesIO()
+    qr.save(buffer, format="PNG")
+    qr_base64 = base64.b64encode(buffer.getvalue()).decode("utf-8")
+
+    return render_template("registro_exitoso.html", curp=curp, nombre=nombre, qr_base64=qr_base64)
 
 @app.route("/escanear", methods=["GET", "POST"])
 def escanear():
@@ -54,28 +56,39 @@ def escanear():
 
 @app.route("/registrar_asistencia", methods=["POST"])
 def registrar_asistencia():
-    try:
-        curp = request.json.get("curp")
-        alumno = supabase.table("alumnos").select("*").eq("curp", curp).execute().data
-        if not alumno:
-            return jsonify({"status": "error", "mensaje": "CURP no encontrado"})
+    curp = request.json.get("curp")
+    fecha = datetime.now().isoformat()
 
-        supabase.table("asistencias").insert({
-            "curp": curp,
-            "nombre": alumno[0]["nombre"],
-            "fecha_hora": datetime.now().isoformat()
-        }).execute()
+    alumno = supabase.table("alumnos").select("*").eq("curp", curp).execute().data
+    if not alumno:
+        return jsonify({"status": "error", "mensaje": "CURP no encontrado"})
 
-        return jsonify({"status": "ok", "mensaje": "Asistencia registrada correctamente"})
-    except Exception as e:
-        return jsonify({"status": "error", "mensaje": "Error al registrar asistencia"})
+    supabase.table("asistencias").insert({
+        "curp": curp,
+        "nombre": alumno[0]["nombre"],
+        "fecha_hora": fecha
+    }).execute()
+
+    return jsonify({"status": "ok", "mensaje": "Asistencia registrada correctamente"})
 
 @app.route("/consultar", methods=["GET", "POST"])
 def consultar():
     if request.method == "POST":
         curp = request.form["curp"]
         asistencias = supabase.table("asistencias").select("*").eq("curp", curp).execute().data
-        return render_template("calendario.html", curp=curp, asistencias=asistencias)
+
+        fechas_asistencia = [registro["fecha_hora"][:10] for registro in asistencias]
+        hoy = datetime.now().date()
+        dias_mes = [(hoy.replace(day=1) + timedelta(days=i)).isoformat()
+                    for i in range(31) if (hoy.replace(day=1) + timedelta(days=i)).month == hoy.month]
+
+        calendario = []
+        for dia in dias_mes:
+            estado = "asistio" if dia in fechas_asistencia else "falto"
+            calendario.append({"fecha": dia, "estado": estado})
+
+        return render_template("calendario.html", curp=curp, calendario=calendario)
+
     return render_template("consultar.html")
 
 if __name__ == "__main__":
