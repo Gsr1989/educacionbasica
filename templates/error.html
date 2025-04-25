@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Error</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <header>
+        <h1>¡Error!</h1>
+    </header>
+
+    <main class="center">
+        <p class="error">{{ mensaje }}</p>
+        <a class="btn" href="/">Volver al inicio</a>
+    </main>
+
+    <footer>
+        <p>&copy; 2025 Sistema de Asistencia Escolar.</p>
+    </footer>
+</body>
+</html>
