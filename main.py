@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from supabase import create_client
 from datetime import datetime
 import qrcode
@@ -8,12 +8,10 @@ import base64
 app = Flask(__name__)
 app.secret_key = "clave_super_secreta"
 
-# Supabase
 SUPABASE_URL = "https://axgqvhgtbzkraytzaomw.supabase.co"
-SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4Z3F2aGd0YnprcmF5dHphb213Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1NDAwNzUsImV4cCI6MjA2MTExNjA3NX0.fWWMBg84zjeaCDAg-DV1SOJwVjbWDzKVsIMUTuVUVsY"
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# Contraseña para acceder a registro y escaneo
 CONTRASENA = "Nivelbasico2025"
 
 @app.route("/")
@@ -33,17 +31,12 @@ def registrar():
 def registrar_alumno():
     curp = request.form["curp"]
     nombre = request.form["nombre"]
-
-    try:
-        supabase.table("alumnos").insert({"curp": curp, "nombre": nombre}).execute()
-    except Exception:
-        return render_template("error.html", mensaje="Este CURP ya fue registrado")
+    supabase.table("alumnos").insert({"curp": curp, "nombre": nombre}).execute()
 
     qr = qrcode.make(curp)
     buffer = io.BytesIO()
     qr.save(buffer, format="PNG")
     qr_base64 = base64.b64encode(buffer.getvalue()).decode("utf-8")
-
     return render_template("registro_exitoso.html", curp=curp, nombre=nombre, qr_base64=qr_base64)
 
 @app.route("/escanear", methods=["GET", "POST"])
@@ -57,41 +50,24 @@ def escanear():
 
 @app.route("/registrar_asistencia", methods=["POST"])
 def registrar_asistencia():
-    data = request.get_json()
-    curp = data.get("curp")
-    fecha = datetime.now().isoformat()
-
+    curp = request.json.get("curp")
+    fecha_hora = datetime.now().isoformat()
     alumno = supabase.table("alumnos").select("*").eq("curp", curp).execute().data
     if not alumno:
         return jsonify({"status": "error", "mensaje": "CURP no encontrado"})
-
-    nombre = alumno[0]["nombre"]
-
     supabase.table("asistencias").insert({
         "curp": curp,
-        "nombre": nombre,
-        "fecha_hora": fecha
+        "nombre": alumno[0]["nombre"],
+        "fecha_hora": fecha_hora
     }).execute()
-
     return jsonify({"status": "ok", "mensaje": "Asistencia registrada correctamente"})
 
 @app.route("/consultar", methods=["GET", "POST"])
 def consultar():
     if request.method == "POST":
         curp = request.form["curp"]
-        asistencias_raw = supabase.table("asistencias").select("*").eq("curp", curp).execute().data
-
-        dias = []
-        for a in asistencias_raw:
-            try:
-                fecha_str = a["fecha_hora"]
-                fecha_obj = datetime.fromisoformat(fecha_str)
-                dias.append(fecha_obj.strftime("%Y-%m-%d"))
-            except:
-                continue
-
-        return render_template("calendario.html", curp=curp, dias=dias)
-
+        asistencias = supabase.table("asistencias").select("*").eq("curp", curp).execute().data
+        return render_template("calendario.html", curp=curp, asistencias=asistencias)
     return render_template("consultar.html")
 
 if __name__ == "__main__":
