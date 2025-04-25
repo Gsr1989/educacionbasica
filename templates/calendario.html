@@ -1,42 +1,57 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <title>Asistencia</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
-    <style>
-        .asistencia-dia {
-            display: inline-block;
-            padding: 10px;
-            margin: 5px;
-            border-radius: 5px;
-            color: white;
-        }
-        .verde {
-            background-color: #007f5f;
-        }
-        .rojo {
-            background-color: #c1121f;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <title>Calendario de Asistencia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    .calendario {
+      display: grid;
+      grid-template-columns: repeat(7, 1fr);
+      gap: 5px;
+      margin-top: 20px;
+    }
+    .dia {
+      padding: 10px;
+      text-align: center;
+      border-radius: 5px;
+      font-weight: bold;
+    }
+    .asistio {
+      background-color: #4caf50;
+      color: white;
+    }
+    .falto {
+      background-color: #f44336;
+      color: white;
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <h2>Asistencia de {{ curp }}</h2>
+  <header>
+    <h1>Calendario de Asistencia</h1>
+  </header>
 
-        {% if asistencias and asistencias|length > 0 %}
-            <p>Días que asistió:</p>
-            {% for a in asistencias %}
-                {% if a.fecha_hora %}
-                    <div class="asistencia-dia verde">{{ a.fecha_hora[:10] }}</div>
-                {% endif %}
-            {% endfor %}
-        {% else %}
-            <p class="asistencia-dia rojo">No se encontraron asistencias</p>
-        {% endif %}
-
-        <a class="boton" href="/">Volver al inicio</a>
+  <main style="padding: 20px;">
+    <h2>CURP: {{ curp }}</h2>
+    <div class="calendario">
+      {% set dias_asistidos = asistencias | map(attribute='fecha_hora') | map('slice', 0, 10) | list %}
+      {% set fecha_actual = namespace(value=start_date) %}
+      {% for i in range(total_dias) %}
+        {% set fecha_str = fecha_actual.value.strftime('%Y-%m-%d') %}
+        <div class="dia {% if fecha_str in dias_asistidos %}asistio{% else %}falto{% endif %}">
+          {{ fecha_actual.value.day }}
+        </div>
+        {% set _ = fecha_actual.__setattr__('value', fecha_actual.value + timedelta(days=1)) %}
+      {% endfor %}
     </div>
+    <br>
+    <a href="/" class="boton">Volver al Inicio</a>
+  </main>
+
+  <footer>
+    <p>&copy; 2025 Sistema de Asistencia Escolar.</p>
+  </footer>
 </body>
 </html>
