@@ -2,29 +2,19 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Escanear Asistencia</title>
+    <title>Escanear - Clave</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
 </head>
 <body>
-    <header>
-        <h1>Sistema de Asistencia Escolar</h1>
-        <p>Escaneo con QR (requiere contraseña)</p>
-    </header>
-
-    <main>
-        {% if error %}
-            <p style="color:red;">{{ error }}</p>
-        {% endif %}
+    <div class="container">
+        <h2>Escanear QR</h2>
         <form method="POST">
             <label for="clave">Contraseña:</label>
-            <input type="password" id="clave" name="clave" required>
-            <button type="submit">Continuar</button>
+            <input type="password" name="clave" required>
+            <button type="submit">Acceder</button>
         </form>
-        <a href="{{ url_for('index') }}">Volver al inicio</a>
-    </main>
-
-    <footer>
-        <p>&copy; 2025 Sistema de Asistencia Escolar.</p>
-    </footer>
+        <a href="/">Volver al inicio</a>
+    </div>
 </body>
 </html>
