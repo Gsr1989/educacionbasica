@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Calendario de Asistencia</title>
+    <title>Asistencia</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <style>
@@ -13,11 +13,9 @@
             border-radius: 5px;
             color: white;
         }
-
         .verde {
             background-color: #007f5f;
         }
-
         .rojo {
             background-color: #c1121f;
         }
@@ -26,15 +24,19 @@
 <body>
     <div class="container">
         <h2>Asistencia de {{ curp }}</h2>
-        {% if asistencias %}
+
+        {% if asistencias and asistencias|length > 0 %}
             <p>Días que asistió:</p>
             {% for a in asistencias %}
-                <div class="asistencia-dia verde">{{ a.fecha_hora[:10] }}</div>
+                {% if a.fecha_hora %}
+                    <div class="asistencia-dia verde">{{ a.fecha_hora[:10] }}</div>
+                {% endif %}
             {% endfor %}
         {% else %}
-            <p class="rojo asistencia-dia">Sin asistencias registradas</p>
+            <p class="asistencia-dia rojo">No se encontraron asistencias</p>
         {% endif %}
-        <a href="/">Volver al inicio</a>
+
+        <a class="boton" href="/">Volver al inicio</a>
     </div>
 </body>
 </html>
