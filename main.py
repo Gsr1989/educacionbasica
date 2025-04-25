@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, redirect, url_for, session, jsonify
 from supabase import create_client
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, date
 import qrcode
 import io
 import base64
@@ -8,12 +8,10 @@ import base64
 app = Flask(__name__)
 app.secret_key = "clave_super_secreta"
 
-# Supabase
 SUPABASE_URL = "https://axgqvhgtbzkraytzaomw.supabase.co"
 SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImF4Z3F2aGd0YnprcmF5dHphb213Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDU1NDAwNzUsImV4cCI6MjA2MTExNjA3NX0.fWWMBg84zjeaCDAg-DV1SOJwVjbWDzKVsIMUTuVUVsY"
 supabase = create_client(SUPABASE_URL, SUPABASE_KEY)
 
-# Contraseña
 CONTRASENA = "Nivelbasico2025"
 
 @app.route("/")
@@ -33,11 +31,8 @@ def registrar():
 def registrar_alumno():
     curp = request.form["curp"]
     nombre = request.form["nombre"]
+    supabase.table("alumnos").insert({"curp": curp, "nombre": nombre}).execute()
 
-    # Insertar en Supabase
-    data = supabase.table("alumnos").insert({"curp": curp, "nombre": nombre}).execute()
-
-    # Crear QR
     qr = qrcode.make(curp)
     buffer = io.BytesIO()
     qr.save(buffer, format="PNG")
@@ -77,22 +72,19 @@ def consultar():
         curp = request.form["curp"]
         asistencias = supabase.table("asistencias").select("*").eq("curp", curp).execute().data
 
-        if not asistencias:
-            return render_template("error.html", mensaje="No hay asistencias registradas para ese CURP")
+        if asistencias:
+            today = date.today()
+            start_date = today.replace(day=1)
+            end_date = (start_date.replace(month=start_date.month % 12 + 1, day=1) - timedelta(days=1))
+            total_dias = (end_date - start_date).days + 1
 
-        fechas = [datetime.fromisoformat(a["fecha_hora"]) for a in asistencias]
-        fechas.sort()
-        start_date = fechas[0].date()
-        end_date = fechas[-1].date()
-        total_dias = (end_date - start_date).days + 1
-        daydelta = timedelta(days=1)
-
-        return render_template("calendario.html",
-                               curp=curp,
-                               asistencias=asistencias,
-                               start_date=start_date,
-                               total_dias=total_dias,
-                               daydelta=daydelta)
+            return render_template("calendario.html",
+                                   curp=curp,
+                                   asistencias=asistencias,
+                                   start_date=start_date,
+                                   total_dias=total_dias)
+        else:
+            return render_template("error.html", mensaje="No hay asistencias registradas para este CURP.")
     return render_template("consultar.html")
 
 if __name__ == "__main__":
