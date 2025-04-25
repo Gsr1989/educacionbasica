@@ -1,65 +1,45 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-  <meta charset="UTF-8">
-  <title>Escanear QR</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js"></script>
-  <style>
-    body {
-      font-family: Arial, sans-serif;
-      background-color: #f4f4f4;
-      margin: 0;
-      padding: 0;
-    }
-    header {
-      background-color: #006666;
-      color: white;
-      padding: 20px;
-      text-align: center;
-    }
-    .contenedor {
-      padding: 20px;
-      max-width: 600px;
-      margin: auto;
-      text-align: center;
-    }
-    #reader {
-      width: 100%;
-    }
-  </style>
-</head>
-<body>
-  <header>
-    <h1>Escanear QR</h1>
-  </header>
-  <div class="contenedor">
-    <div id="reader"></div>
-    <div id="resultado"></div>
+{% extends "base.html" %}
+{% block head %}
+<script src="https://unpkg.com/html5-qrcode"></script>
+{% endblock %}
+{% block body %}
+<div class="container">
+  <h2>Escanear QR</h2>
+  <div id="auth">
+    <input id="pwd" type="password" placeholder="Contraseña">
+    <button id="goScan">Ingresar</button>
+    <div id="authErr" class="alert"></div>
   </div>
+  <div id="reader" style="width:100%;display:none;"></div>
+  <div id="res" class="alert"></div>
+</div>
+<script>
+const pwdFld = document.getElementById("pwd"),
+      authErr = document.getElementById("authErr"),
+      authDiv = document.getElementById("auth"),
+      reader  = document.getElementById("reader"),
+      resDiv  = document.getElementById("res");
 
-  <script>
-    function onScanSuccess(decodedText, decodedResult) {
+document.getElementById("goScan").onclick = () => {
+  if (pwdFld.value!=="Nivelbasico2025") {
+    authErr.textContent="Contraseña inválida";
+    return;
+  }
+  authDiv.style.display="none";
+  reader.style.display="block";
+  const html5QrcodeScanner = new Html5Qrcode("reader");
+  html5QrcodeScanner.start(
+    { facingMode: "environment" },
+    { fps: 10, qrbox: 250 },
+    qr => {
+      html5QrcodeScanner.stop();
       fetch("/escanear", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ data: decodedText })
+        method:"POST", headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ curp:qr, password:pwdFld.value })
       })
-      .then(response => response.json())
-      .then(data => {
-        alert(data.message);
-        location.reload();
-      })
-      .catch(error => {
-        alert("Error al registrar asistencia.");
-      });
+      .then(r=>r.json()).then(j=> resDiv.textContent=j.mensaje);
     }
-
-    new Html5QrcodeScanner(
-      "reader",
-      { fps: 10, qrbox: 250 },
-      false
-    ).render(onScanSuccess);
-  </script>
-</body>
-</html>
+  );
+};
+</script>
+{% endblock %}
