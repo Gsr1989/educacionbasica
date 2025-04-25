@@ -1,11 +1,37 @@
-<!DOCTYPE html><html lang="es"><head><meta charset="UTF-8"><title>Calendario</title></head><body>
-  <h2>Asistencias de {{curp}}</h2>
-  <ul>
-  {% for a in asistencias %}
-    <li>{{a.fecha_hora}}</li>
-  {% else %}
-    <li>(sin registros)</li>
-  {% endfor %}
-  </ul>
-  <a href="/">Inicio</a>
-</body></html>
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Asistencias</title>
+  <style>
+    body { font-family: 'Segoe UI', sans-serif; background-color: #f1f1f1; margin:0; padding:0; }
+    header, footer { background: #00796b; color: white; text-align: center; }
+    header { padding: 20px 0; } footer { padding: 10px 0; margin-top:20px; }
+    .container { max-width:400px; background:white; margin:20px auto; padding:20px; 
+                 box-shadow:0 4px 8px rgba(0,0,0,0.1); border-radius:8px; }
+    ul { list-style: none; padding: 0; }
+    li { background:#e8f5e9; margin:8px 0; padding:10px; border-radius:5px; }
+    button { background:#00796b; color:white; border:none; padding:10px; border-radius:5px;
+             font-size:16px; cursor:pointer; width:100%; margin-top:10px; }
+    button:hover { background:#004d40; }
+    h2 { color:#00796b; text-align:center; }
+  </style>
+</head>
+<body>
+  <header><h1>Asistencias de {{ curp }}</h1></header>
+  <div class="container">
+    {% if asistencias %}
+      <ul>
+        {% for a in asistencias %}
+          <li>{{ a.fecha_hora }}</li>
+        {% endfor %}
+      </ul>
+    {% else %}
+      <p>No hay registros de asistencia.</p>
+    {% endif %}
+    <button onclick="location.href='/'">Volver al inicio</button>
+  </div>
+  <footer>&copy; 2025 Sistema de Asistencia Escolar.</footer>
+</body>
+</html>
